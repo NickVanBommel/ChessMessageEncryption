@@ -67,7 +67,6 @@
       {
         message = message.toUpperCase();
         pieces = splitMessage(message);
-
         for (var charSetIndex = 0; charSetIndex < 10 && charSetIndex < pieces.length; charSetIndex++)
         {
           pieces[charSetIndex] = determineGrouping(pieces[charSetIndex]);

@@ -245,16 +245,20 @@
     }
   }
 
-  function getBoardFromGroupings(groupings)
+  function getBoardFromGroupings(pieces)
   {
     var boardArray = new Array(8);
     for (var k = 0; k < 8; k++)
     {
       boardArray[k] = new Array(8);
+      for (var i = 0; i < 8; i++)
+      {
+        boardArray[k][i] = 0;
+      }
     }
     //loop through groups 0, 2, 4, 6
 
-    for (var groupIndex = 0; groupIndex < 8; groupIndex = groupIndex + 2)
+    for (var groupIndex = 0; groupIndex < 8 && groupIndex < pieces.length; groupIndex = groupIndex + 2)
     {
       for (var j = 0; j < 3; j++)
       {
@@ -275,7 +279,7 @@
 
         //loop through groups 1, 3, 5, 7
 
-        for (var groupIndex = 1; groupIndex < 8; groupIndex = groupIndex + 2)
+        for (var groupIndex = 1; groupIndex < 8 && groupIndex < pieces.length; groupIndex = groupIndex + 2)
         {
           for (var j = 3; j < 6; j++)
           {
@@ -294,27 +298,34 @@
 
           }
 
-        //loop through groups 8, 9
-        boardArray[0][7] = pieces[8][0];
-        boardArray[1][7] = pieces[8][1];
-        boardArray[2][7] = pieces[8][2];
-        boardArray[0][6] = pieces[8][3];
-        boardArray[1][6] = pieces[8][4];
-        boardArray[2][6] = pieces[8][5];
+          if (pieces.length > 8)
+          {
+            boardArray[0][7] = pieces[8][0];
+            boardArray[1][7] = pieces[8][1];
+            boardArray[2][7] = pieces[8][2];
+            boardArray[0][6] = pieces[8][3];
+            boardArray[1][6] = pieces[8][4];
+            boardArray[2][6] = pieces[8][5];
 
-        boardArray[3][7] = pieces[9][0];
-        boardArray[4][7] = pieces[9][1];
-        boardArray[5][7] = pieces[9][2];
-        boardArray[3][6] = pieces[9][3];
-        boardArray[4][6] = pieces[9][4];
-        boardArray[5][6] = pieces[9][5];
+          }
+          if (pieces.length > 9)
+          {
+            boardArray[3][7] = pieces[9][0];
+            boardArray[4][7] = pieces[9][1];
+            boardArray[5][7] = pieces[9][2];
+            boardArray[3][6] = pieces[9][3];
+            boardArray[4][6] = pieces[9][4];
+            boardArray[5][6] = pieces[9][5];
+
+          }
+        //loop through groups 8, 9
+
 
 
         boardArray[6][7] = 0;
         boardArray[6][6] = 0;
         boardArray[7][6] = 0;
         boardArray[7][7] = 0;
-
         return boardArray;
   }
 function getFENFromBoard(boardArray)
