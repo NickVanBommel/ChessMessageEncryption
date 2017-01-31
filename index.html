@@ -1,0 +1,121 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="examples/example.css">
+    <link rel="stylesheet" href="assets/base.css">
+    <link rel="stylesheet" href="assets/theme.css">
+    <link rel="stylesheet" href="assets/desktop.css">
+  </head>
+  <body>
+    <script src="chessground.js"></script>
+    <script src="examples/chess.min.js"></script>
+    <script src="examples/decryption.js"></script>
+    <script src="examples/encryption.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+      function chessToDests(chess) {
+        var dests = {};
+        chess.SQUARES.forEach(function(s) {
+          var ms = chess.moves({square: s, verbose: true});
+          if (ms.length) dests[s] = ms.map(function(m) { return m.to; });
+        });
+        return dests;
+      }
+      function chessToColor(chess) {
+        return (chess.turn() == "w") ? "white" : "black";
+      }
+      function fenToBoardArray(fen) {
+
+      	//get each line
+      	var lines = fen.split("/");
+
+      	//2d array to decode from
+      	var boardArray = new Array(8);
+
+      	//go through each line
+      	$.each(lines, function(index, value) {
+
+      		boardArray[index] = new Array(8);
+
+      		//split each line onto each character
+      		var vals = value.split("");
+      		var boardIndex = 0;
+      		for (var readingIndex = 0; readingIndex < vals.length; readingIndex++)
+      		{
+      			//current character
+      			currChar = vals[readingIndex];
+      			if (currChar == "1" || currChar == "2" || currChar == "3" || currChar == "4" || currChar == "5" || currChar == "6" || currChar == "7" || currChar == "8")
+      			{
+      				for (var i = 0; i < currChar; i++)
+      				{
+      					boardArray[index][boardIndex + i] = "";
+      				}
+      				boardIndex = boardIndex + Number(currChar);
+      			}
+      			else
+      			{
+      				boardArray[index][boardIndex] = currChar;
+      				boardIndex++;
+      			}
+      		}
+      	})
+      	$("#decodedLabel").text(decryptArray(boardArray));
+      	return;
+      }
+
+      function encodeMessage(message)
+      {
+        message = message.toUpperCase();
+        pieces = splitMessage(message);
+
+        for (var charSetIndex = 0; charSetIndex < 10 && charSetIndex < pieces.length; charSetIndex++)
+        {
+          pieces[charSetIndex] = determineGrouping(pieces[charSetIndex]);
+        }
+
+        var boardArray = getBoardFromGroupings(pieces);
+        var FENcode = getFENFromBoard(boardArray);
+        ground.set({fen: FENcode});
+      }
+    </script>
+      <div>
+        <input id="messageToEncode" type="text"/>
+        </br>
+        <button type="button" onclick="encodeMessage(messageToEncode.value)">Encode</button>
+      </div>
+    <section>
+        <div class="chessground small wood cburnett" id="ground1"></div>
+        <script>
+          let ground;
+            (function() {
+          var chess = new Chess();
+          var onMove = function(orig, dest) {
+            chess.move({from: orig, to: dest});
+          };
+          ground = Chessground(document.getElementById('ground1'), {
+            pieces: "R2K2Q1/PN1P1k1r/1rRN2P1/1P2P1PP/P3p1p1/pp1p4/p3BB2/1b2b3",
+            viewOnly: false,
+            animation: {
+              duration: 500
+            },
+            movable: {
+              free: true,
+              dests: chessToDests(chess),
+              events: {
+                after: onMove
+              }
+            },
+            drawable: {
+              enabled: true
+            }
+          });
+              window.cg7 = ground;
+        })();
+        </script>
+    </section>
+    <button type="button" onclick="fenToBoardArray(ground.getFen())">Decode</button>
+    </br>
+    <label id="decodedLabel">No decoded mesage</label>
+  </body>
+</html>
+
